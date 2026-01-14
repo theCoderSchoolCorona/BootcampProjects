@@ -1,4 +1,8 @@
-Currently 2 of these projects are deployed online.
+# Welcome to theCoderSchoolCorona's AI Bootcamp Projects!
 
-Job Recommender: https://jobmatchml.streamlit.app/
-Movie Recommender: https://gowatch.streamlit.app/
+### Currently, 2 of these projects are being hosted online, and are viewable without running any code. 
+**Job Recommender**: https://jobmatchml.streamlit.app/ 
+- created by Tuvshin and Mo, supervised by Jordan
+
+**Movie Recommender**: https://gowatch.streamlit.app/
+- created by Alex, Max, and Richard, supervised by Jordan
