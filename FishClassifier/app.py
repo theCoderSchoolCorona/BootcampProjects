@@ -48,7 +48,7 @@ def load_model():
         model: The trained Keras model ready for inference
     """
     
-    model_path = "fish_model.keras"
+    model_path = "./FishClassifier/fish_model.keras"
     
     if not os.path.exists(model_path):
         st.error(f"Model file not found: {model_path}")
@@ -72,7 +72,7 @@ def get_class_names():
     """
     import pathlib
     
-    organized_dir = pathlib.Path("./Fish_Data/organized/")
+    organized_dir = pathlib.Path(".FishClassifier/Fish_Data/organized/")
     
     if organized_dir.exists():
         # Get class names from folder structure (same as how Keras loads them)
