@@ -5,4 +5,4 @@
 - created by Tuvshin and Mo, supervised by Jordan
 
 **Movie Recommender**: https://gowatch.streamlit.app/
-- created by Alex, Max, and Richard, supervised by Jordan
+- created by Zente and Lucas, supervised by Jordan
