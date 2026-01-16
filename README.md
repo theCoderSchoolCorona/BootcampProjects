@@ -6,3 +6,6 @@
 
 **Movie Recommender**: https://gowatch.streamlit.app/
 - created by Zente and Lucas, supervised by Jordan
+
+**Fish Classifier**: https://finfinder.streamlit.app/
+- created by Altus and Calvin, supervised by Jordan
