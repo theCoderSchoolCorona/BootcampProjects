@@ -16,6 +16,7 @@ import keras
 import os
 import plotly.express as px
 import pandas as pd
+import json
 
 # =============================================================================
 # PAGE CONFIGURATION
@@ -70,17 +71,16 @@ def get_class_names():
     Returns:
         list: Sorted list of class names (fish species)
     """
-    import pathlib
     
-    organized_dir = pathlib.Path(".FishClassifier/Fish_Data/organized/")
-    
-    if organized_dir.exists():
-        # Get class names from folder structure (same as how Keras loads them)
-        class_names = sorted([d.name for d in organized_dir.iterdir() if d.is_dir()])
+    class_names_file = "class_names.json"
+    if os.path.exists(class_names_file):
+        with open(class_names_file, "r") as jf:
+            class_names = json.load(jf)
         return class_names
     else:
-        st.warning("Could not find organized data directory. Using placeholder class names.")
-        return ["Unknown"]
+        st.warning(f"No fish species class file found. Please ensure {class_names_file} is within local path.")
+        st.stop()
+    
 
 
 def predict_fish(image, model, class_names, show_n=5):
