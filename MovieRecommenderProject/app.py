@@ -36,7 +36,7 @@ def load_recommender():
     if not all(os.path.exists(path) for path in required_files):
         train_and_save()
 
-    model, feature_data, data, encoders = load_model()
+    model, feature_data, data, encoders = load_model(MODEL_ARTIFACTS_DIR)
     return model, feature_data, data
 
 # Load on startup
