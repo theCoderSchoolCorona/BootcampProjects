@@ -6,6 +6,11 @@ from model import train_and_save, load_model, recommend_movies, get_movie_info
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_ARTIFACTS_DIR = os.path.join(BASE_DIR, "model_artifacts")
 
+KNN_MODEL_PATH = os.path.join(MODEL_ARTIFACTS_DIR, "knn_model.joblib")
+FEATURE_DATA_PATH = os.path.join(MODEL_ARTIFACTS_DIR, "feature_data.joblib")
+MOVIE_DATA_PATH = os.path.join(MODEL_ARTIFACTS_DIR, "movie_data.csv")
+ENCODERS_PATH = os.path.join(MODEL_ARTIFACTS_DIR, "encoders.joblib")
+
 # TMDB image base URL, w342 is a good balance of quality and load speed
 TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w342"
 
@@ -21,8 +26,16 @@ st.set_page_config(
 @st.cache_resource
 def load_recommender():
     """Load the trained model and data. Cached to avoid reloading on every interaction."""
-    if not os.path.exists(MODEL_ARTIFACTS_DIR):
+    required_files = [
+        KNN_MODEL_PATH,
+        FEATURE_DATA_PATH,
+        MOVIE_DATA_PATH,
+        ENCODERS_PATH
+    ]
+
+    if not all(os.path.exists(path) for path in required_files):
         train_and_save()
+
     model, feature_data, data, encoders = load_model()
     return model, feature_data, data
 
@@ -46,14 +59,11 @@ def format_budget(budget):
 # STREAMLIT UI
 # ==============================================================================
 
-# Title
 st.title("GoWatch: A Movie Recommender")
 st.write("Find similar movies based on genres, plot, keywords, and more!")
 
-# Sidebar controls
 st.sidebar.header("Settings")
 
-# Movie selection, searchable dropdown
 movie_list = sorted(data["title"].tolist())
 selected_movie = st.sidebar.selectbox(
     "Choose a movie you like:",
@@ -61,7 +71,6 @@ selected_movie = st.sidebar.selectbox(
     index=movie_list.index("Inception") if "Inception" in movie_list else 0
 )
 
-# Number of recommendations slider
 n_recommendations = st.sidebar.slider(
     "Number of recommendations:",
     min_value=3,
@@ -69,7 +78,6 @@ n_recommendations = st.sidebar.slider(
     value=6
 )
 
-# Budget filter, optional
 st.sidebar.subheader("Filter by Budget")
 budget_filter = st.sidebar.radio(
     "Show only:",
@@ -80,7 +88,6 @@ budget_filter = st.sidebar.radio(
 # MAIN CONTENT
 # ==============================================================================
 
-# Show selected movie info
 st.subheader("Your Selection")
 input_movie = get_movie_info(selected_movie, data)
 
@@ -98,7 +105,6 @@ if input_movie:
 
 st.divider()
 
-# Get recommendations
 st.subheader(f"Movies Similar to '{selected_movie}'")
 
 recommendations = recommend_movies(
@@ -110,7 +116,6 @@ recommendations = recommend_movies(
 )
 
 if recommendations:
-    # Apply budget filter
     if budget_filter == "Indie (<\\$30M)":
         recommendations = [r for r in recommendations if r["budget"] < 30_000_000]
     elif budget_filter == "Mid (\\$30M-\\$100M)":
@@ -118,13 +123,11 @@ if recommendations:
     elif budget_filter == "Blockbuster (>\\$100M)":
         recommendations = [r for r in recommendations if r["budget"] >= 100_000_000]
 
-    # Limit to requested number
     recommendations = recommendations[:n_recommendations]
 
     if not recommendations:
         st.warning("No movies found matching your budget filter. Try a different filter!")
     else:
-        # Display in a grid, 3 columns
         cols = st.columns(3)
 
         for i, movie in enumerate(recommendations):
@@ -140,10 +143,6 @@ if recommendations:
                     st.write(f"**Overview:** {movie['overview']}")
 else:
     st.error("Movie not found! Please try a different title.")
-
-# ==============================================================================
-# FOOTER
-# ==============================================================================
 
 st.divider()
 st.caption(f"Database: {len(data):,} movies | Model: K-Nearest Neighbors with TF-IDF features")
